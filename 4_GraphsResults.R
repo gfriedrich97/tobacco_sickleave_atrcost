@@ -45,39 +45,39 @@ results <- All_data %>% select(sexo,grupo_edad,enfermedad,Denom_Cost_weighted,
 
 
 #Resultados - Total
-results_total <- results %>% summarise(lwr=sum(Lwr_Atr_Cost_weighted), 
-                                       mean=sum(Mean_Atr_Cost_weighted),
-                                       upr=sum(Upr_Atr_Cost_weighted),
-                                       denominador = sum(Denom_Cost_weighted),
+results_total <- results %>% summarise(lwr=sum(Lwr_Atr_Cost_weighted)/(3694.8*1000000), 
+                                       mean=sum(Mean_Atr_Cost_weighted)/(3694.8*1000000),
+                                       upr=sum(Upr_Atr_Cost_weighted)/(3694.8*1000000),
+                                       denominador = sum(Denom_Cost_weighted)/(3694.8*1000000),
                                        percentage = mean/denominador)
 
 
 #Gráficos - costos por sexo y edad
-results_age_sex <- results %>% group_by(sexo, grupo_edad) %>% summarise(lwr=sum(Lwr_Atr_Cost_weighted), 
-                                                                        mean=sum(Mean_Atr_Cost_weighted),
-                                                                        upr=sum(Upr_Atr_Cost_weighted),
-                                                                        denominador = sum(Denom_Cost_weighted),
+results_age_sex <- results %>% group_by(sexo, grupo_edad) %>% summarise(lwr=sum(Lwr_Atr_Cost_weighted)/(3694.8*1000000), 
+                                                                        mean=sum(Mean_Atr_Cost_weighted)/(3694.8*1000000),
+                                                                        upr=sum(Upr_Atr_Cost_weighted)/(3694.8*1000000),
+                                                                        denominador = sum(Denom_Cost_weighted)/(3694.8*1000000),
                                                                         percentage = mean/denominador)
 
 #Gráficos - costos por enfermedad
-results_enfermedad <- results %>% group_by(enfermedad) %>% summarise(lwr=sum(Lwr_Atr_Cost_weighted), 
-                                                                     mean=sum(Mean_Atr_Cost_weighted),
-                                                                     upr=sum(Upr_Atr_Cost_weighted),
-                                                                     denominador = sum(Denom_Cost_weighted),
+results_enfermedad <- results %>% group_by(enfermedad) %>% summarise(lwr=sum(Lwr_Atr_Cost_weighted)/(3694.8*1000000), 
+                                                                     mean=sum(Mean_Atr_Cost_weighted)/(3694.8*1000000),
+                                                                     upr=sum(Upr_Atr_Cost_weighted)/(3694.8*1000000),
+                                                                     denominador = sum(Denom_Cost_weighted)/(3694.8*1000000),
                                                                      percentage = mean/denominador)
 
 #Resultados - costos por sexo
-results_sexo <- results %>% group_by(sexo) %>% summarise(lwr=sum(Lwr_Atr_Cost_weighted), 
-                                                         mean=sum(Mean_Atr_Cost_weighted),
-                                                         upr=sum(Upr_Atr_Cost_weighted),
-                                                         denominador = sum(Denom_Cost_weighted),
+results_sexo <- results %>% group_by(sexo) %>% summarise(lwr=sum(Lwr_Atr_Cost_weighted)/(3694.8*1000000), 
+                                                         mean=sum(Mean_Atr_Cost_weighted)/(3694.8*1000000),
+                                                         upr=sum(Upr_Atr_Cost_weighted)/(3694.8*1000000),
+                                                         denominador = sum(Denom_Cost_weighted)/(3694.8*1000000),
                                                          percentage = mean/denominador)
 
 #Resultados - costos por edad
-results_edad <- results %>% group_by(grupo_edad) %>% summarise(lwr=sum(Lwr_Atr_Cost_weighted), 
-                                                               mean=sum(Mean_Atr_Cost_weighted),
-                                                               upr=sum(Upr_Atr_Cost_weighted),
-                                                               denominador = sum(Denom_Cost_weighted),
+results_edad <- results %>% group_by(grupo_edad) %>% summarise(lwr=sum(Lwr_Atr_Cost_weighted)/(3694.8*1000000), 
+                                                               mean=sum(Mean_Atr_Cost_weighted)/(3694.8*1000000),
+                                                               upr=sum(Upr_Atr_Cost_weighted)/(3694.8*1000000),
+                                                               denominador = sum(Denom_Cost_weighted)/(3694.8*1000000),
                                                                percentage = mean/denominador)
 
 #------------------------------------------------------------------------------------------------
@@ -85,6 +85,7 @@ results_edad <- results %>% group_by(grupo_edad) %>% summarise(lwr=sum(Lwr_Atr_C
 
 #Gráficos
 library(data.table)
+results_age_sex$denominador<-results_age_sex$denominador-results_age_sex$mean
 long_mean <- results_age_sex %>% select(grupo_edad,sexo,mean)
 colnames(long_mean) <- c("grupo_edad","sexo","costo")
 long_den <- results_age_sex %>% select(grupo_edad,sexo,denominador)
@@ -106,7 +107,7 @@ pl<- pl+theme(legend.position = "none")
 #pl <- pl+  theme(panel.grid.minor = element_blank()) 
 #pl <- pl + geom_text(aes(label=paste0(sprintf("%1.1f", percent*100),"%")),
 #position=position_stack(vjust=0.5), colour="white", size = 2)
-pl <- pl  + ylab("SLNOD financial cost (2020 Billion COP)")
+pl <- pl  + ylab("SLNOD financial cost (2020 million USD)")
 pl <- pl + facet_grid(.~grupo_edad)
 pl
 
@@ -117,6 +118,7 @@ pl + geom_errorbar(aes(ymin=lwr, ymax=upr), size=0.5,
 
 #Mismo gráfico para diseases:
 library(data.table)
+results_enfermedad$denominador<-results_enfermedad$denominador-results_enfermedad$mean
 long_mean <- results_enfermedad %>% select(enfermedad,mean)
 colnames(long_mean) <- c("enfermedad","costo")
 long_den <- results_enfermedad %>% select(enfermedad,denominador)
@@ -130,7 +132,7 @@ long$upr <- long_upr
 long$id_tipo_cost %<>% as.factor()
 
 library(scales)
-level_order = c("Pancreatic cancer","Cervical Cancer","Tracheal, bronchus, and lung cancer","Chronic obstructive pulmonary disease","Stomach cancer","Lower respiratory infections","Stroke","Ischemic heart disease")
+level_order = c("Pancreatic cancer","Tracheal, bronchus, and lung cancer","Cervical Cancer","Chronic obstructive pulmonary disease","Stomach cancer","Lower respiratory infections","Stroke","Ischemic heart disease")
 #Gráficos
 pl <- ggplot(data = long,aes(x=factor(enfermedad, level=level_order), y = costo, fill = factor(id_tipo_cost, levels=c("denominador","mean"))))
 pl <- pl + geom_bar(stat="identity",color = "black")
@@ -140,7 +142,7 @@ pl<- pl+theme(legend.position = "none")
 #pl <- pl+  theme(panel.grid.minor = element_blank()) 
 #pl <- pl + geom_text(aes(label=paste0(sprintf("%1.1f", percent*100),"%")),
 #position=position_stack(vjust=0.5), colour="white", size = 2)
-pl <- pl  + ylab("SLNOD financial cost (2020 Billion COP)")
+pl <- pl  + ylab("SLNOD financial cost (2020 million USD)")
 pl<-pl + geom_errorbar(aes(ymin=lwr, ymax=upr), size=0.5,   
                        width=.25,position=position_dodge(.1))
 pl<-pl +scale_x_discrete(guide = guide_axis(n.dodge=1))
