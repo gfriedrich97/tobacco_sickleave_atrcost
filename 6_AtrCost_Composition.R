@@ -153,3 +153,43 @@ ggplot(stacked_agesex_ibc, aes(fill=factor(rango_smlv, levels=c(">  5  SMLMV","E
 
 
 #------------------------------------------------------------------------------------------------
+
+
+#ingreso por sexo y edad al año y enfermedad
+#------------------------------------------------------------------------------------------------
+#install.packages("ggforce")
+library(ggforce)
+stacked_agesexdisease_ibc <-model_data %>%
+  group_by(sexo,grupo_edad,enfermedad, rango_smlv) %>%
+  tally() %>%
+  mutate(prop = prop.table(n))
+
+ggplot(stacked_agesexdisease_ibc, aes(fill=factor(rango_smlv, levels=c(">  5  SMLMV","ENTRE  2  y  5  SMLMV","<  2  SMLMV")),
+                               x=sexo, y=prop)) + 
+  geom_bar(position="fill", stat="identity")+
+  scale_fill_manual("legend", values = c("#FFC300","#F57C00","#FF5733","#C70039")) +facet_grid_paginate(.~grupo_edad+enfermedad, ncol = 8, nrow = 1, page=8)
+
+
+#------------------------------------------------------------------------------------------------
+
+
+
+#ingreso por sexo y edad al año y enfermedad
+#------------------------------------------------------------------------------------------------
+#install.packages("ggforce")
+library(ggforce)
+stacked_agesexdisease_days <-model_data %>%
+  group_by(sexo,grupo_edad,enfermedad,cat_diastotales) %>%
+  tally() %>%
+  mutate(prop = prop.table(n))
+
+ggplot(stacked_agesexdisease_days, aes(fill=factor(cat_diastotales, levels=c("> 30 días","14-30 días","6-13 días","3-5 días")),
+                                      x=sexo, y=prop)) + 
+  geom_bar(position="fill", stat="identity")+
+  scale_fill_manual("legend", values = c("#FFC300","#F57C00","#FF5733","#C70039")) +facet_grid_paginate(.~grupo_edad+enfermedad, ncol = 8, nrow = 1, page=8)
+
+
+#------------------------------------------------------------------------------------------------
+
+
+
